@@ -9,7 +9,7 @@ class neuralNetwork{
 
         this.lr = learningrate;
     }
-    train(inputs_list, targets_list){
+    train(inputs_list, targets_list,ans){
         let inputs = transpose(inputs_list);
         let targets = transpose(targets_list);
         let hidden_inputs = dot(this.wih, inputs);
@@ -18,16 +18,7 @@ class neuralNetwork{
         let final_outputs = sigmoid(final_inputs);
         let output_errors = subtractMatrices(targets,final_outputs);
         let hidden_errors = dot(transpose(this.who), output_errors);
-        console.log(numberMultiplyMatrices(
-            this.lr,
-            dot(
-                multiplyMatrices(
-                    multiplyMatrices(output_errors,final_outputs),
-                    numberMinusMatrices(1.0,final_outputs)
-                ),
-                transpose(hidden_outputs)
-            )
-        ));
+        console.log(ans,JSON.stringify(final_outputs));
 
         this.who = addMatrices(
             this.who,
@@ -82,14 +73,14 @@ fs.readFile(filePath, 'utf8', function(err, data) {
         for(let x of data.split('\n')){
             i++
             console.log(i);
-            if(i > 5) return;
+            // if(i > 200) return;
             x = x.split(',');
             let answer = x[0];
             let inputs = [numberAddMatrices(0.01,numberMultiplyMatrices(0.99,numberDivMatricesT(x.slice(1),255)))];
             let targets = new Array(outputNodes).fill(0.01);
             targets[answer] = 0.99;
             targets = [targets];
-            neural.train(inputs, targets);
+            neural.train(inputs, targets,answer);
             // console.log(neural.who);
         }
         // console.log('train complete!');
@@ -104,7 +95,7 @@ function numberAddMatrices(number,array){
     return array.map(x=>typeof x == 'object' ? numberAddMatrices(number,x) : number + x);
 }
 function numberMultiplyMatrices(number,array){
-    return array.map(x=>typeof x == 'object' ? numberMinusMatrices(number,x) : number * x);
+    return array.map(x=>typeof x == 'object' ? numberMultiplyMatrices(number,x) : number * x);
 }
 function numberMinusMatrices(number,array){
     return array.map(x=>typeof x == 'object' ? numberMinusMatrices(number,x) : number - x);
