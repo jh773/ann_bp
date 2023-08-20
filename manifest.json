@@ -1,0 +1,50 @@
+{
+	"format_version": 2,
+	"header": {
+		"name": "artificial neural network in Minecraft",
+		"description": "",
+		"min_engine_version": [
+			1,
+			19,
+			50
+		],
+		"uuid": "6724c4fa-2d49-4415-845d-08c8a05e5e51",
+		"version": [
+			1,
+			0,
+			0
+		]
+	},
+	"modules": [
+		{
+			"type": "data",
+			"uuid": "2567c747-1ab6-4703-bb5f-01b835bea39a",
+			"version": [
+				1,
+				0,
+				0
+			]
+		},
+		{
+			"type": "script",
+			"language": "javascript",
+			"uuid": "e117e526-b7b9-458f-b235-02be4c09c0af",
+			"entry": "scripts/main.js",
+			"version": "1.0.0-beta"
+		}
+	],
+	"dependencies": [
+		{
+			"module_name": "@minecraft/server",
+			"version": "1.4.0-beta"
+		},
+		{
+			"module_name": "@minecraft/server-gametest",
+			"version": "1.0.0-beta"
+		},
+		{
+			"module_name": "@minecraft/server-ui",
+			"version": "1.2.0-beta"
+		}
+	]
+}
