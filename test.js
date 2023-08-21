@@ -80,7 +80,7 @@ const fs = require('fs');
 let results = []; 
 const filePath = './mnist/mnist_test.csv';
 
-const epoc = 100;
+const epoc = 1000;
 
 fs.readFile(filePath, 'utf8', function(err, data) {
     if (err) {
@@ -182,7 +182,7 @@ function multiplyMatrices(A, B) {
     return result;
 }
 function sigmoid(x) {
-    return x.map(y=>typeof y == 'object' ? sigmoid(y) : (1/ (1+Math.exp(-y))));
+    return x.map(y=>typeof y == 'object' ? sigmoid(y) : (1/ (1+Math.exp(-y))*0.99));
 }
 function dot(A, B) {
     if (A[0].length !== B.length) {
