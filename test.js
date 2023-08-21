@@ -29,7 +29,11 @@ class neuralNetwork{
 
         const ind = final_outputs.findIndex(x=>x==Math.max(...final_outputs))
         
-
+        if(ind==ans){
+            results.push(1);
+        } else {
+            results.push(0)
+        }
 
 
         this.who = addMatrices(
@@ -73,30 +77,37 @@ let neural = new neuralNetwork(inputNodes,hiddenNodes,outputNodes,learningRate);
 
 const fs = require('fs');
 
-const results = []; 
-const filePath = './mnist/mnist_train.csv';
+let results = []; 
+const filePath = './mnist/mnist_test.csv';
+
+const epoc = 100;
 
 fs.readFile(filePath, 'utf8', function(err, data) {
     if (err) {
         console.error(err);
     } else {
         let i = 0;
-        for(let x of data.split('\n')){
-            i++
-            if(i%100==0) console.log(i);
-            // if(i > 200) return;
-            x = x.split(',');
-            let answer = x[0];
-            let inputs = [numberAddMatrices(0.01,numberMultiplyMatrices(0.99,numberDivMatricesT(x.slice(1),255)))];
-            let targets = new Array(outputNodes).fill(0.01);
-            targets[answer] = 0.99;
-            targets = [targets];
-            neural.train(inputs, targets,answer);
-            // console.log(neural.who);
+        for(let k = 0; k < epoc; k++){
+            for(let x of data.split('\n')){
+                i++
+                if(i%100==0){
+                    console.log(i,`정답률 : ${results.filter(x=>x==1).length / results.length * 100}%`);
+                    results = [];
+                }
+                // if(i > 200) return;
+                x = x.split(',');
+                let answer = x[0];
+                let inputs = [numberAddMatrices(0.01,numberMultiplyMatrices(0.99,numberDivMatricesT(x.slice(1),255)))];
+                let targets = new Array(outputNodes).fill(0.01);
+                targets[answer] = 0.99;
+                targets = [targets];
+                neural.train(inputs, targets,answer);
+                // console.log(neural.who);
+            }
         }
-        fs.writeFile('./trained_wih.js',`export const trained_wih = ${JSON.stringify(neural.wih)};`,(err)=>{})
-        fs.writeFile('./trained_who.js',`export const trained_who = ${JSON.stringify(neural.who)};`,(err)=>{})
-        console.log('저장완료');
+        // fs.writeFile('./trained_wih.js',`export const trained_wih = ${JSON.stringify(neural.wih)};`,(err)=>{})
+        // fs.writeFile('./trained_who.js',`export const trained_who = ${JSON.stringify(neural.who)};`,(err)=>{})
+        // console.log('저장완료');
     }
 });
 
