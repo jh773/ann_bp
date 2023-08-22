@@ -29,12 +29,7 @@ class neuralNetwork{
 
         const ind = final_outputs.findIndex(x=>x==Math.max(...final_outputs))
         
-        if(ind==ans){
-            results.push(1);
-        } else {
-            results.push(0)
-        }
-
+        results.push(ind==ans)
 
         this.who = addMatrices(
             this.who,
@@ -49,13 +44,19 @@ class neuralNetwork{
                 )
             )
         );
-        let heMultiHo = multiplyMatrices(hidden_errors,hidden_outputs)
-        let oneMinusHe = numberMinusMatrices(1.0,hidden_outputs)
-        let wih1 = multiplyMatrices(heMultiHo,oneMinusHe)
-        let wih2 = dot(wih1,transpose(inputs))
-        let wih4 = numberMultiplyMatrices(this.lr,wih2)
-        let wih3 = addMatrices(this.wih,wih4)
-        this.wih = wih3;
+        this.wih = addMatrices(
+            this.wih,
+            numberMultiplyMatrices(
+                this.lr,
+                dot(
+                    multiplyMatrices(
+                        multiplyMatrices(hidden_errors,hidden_outputs),
+                        numberMinusMatrices(1.0,hidden_outputs)
+                    ),
+                    transpose(inputs)
+                )
+            )
+        );
     }
     query(inputs_list){
         let inputs = transpose(inputs_list);
@@ -80,21 +81,20 @@ const fs = require('fs');
 let results = []; 
 const filePath = './mnist/mnist_test.csv';
 
-const epoc = 1000;
+const epochs = 1;
 
 fs.readFile(filePath, 'utf8', function(err, data) {
     if (err) {
         console.error(err);
     } else {
         let i = 0;
-        for(let k = 0; k < epoc; k++){
+        for(let k = 0; k < epochs; k++){
             for(let x of data.split('\n')){
-                i++
+                i++;
                 if(i%100==0){
                     console.log(i,`정답률 : ${results.filter(x=>x==1).length / results.length * 100}%`);
                     results = [];
                 }
-                // if(i > 200) return;
                 x = x.split(',');
                 let answer = x[0];
                 let inputs = [numberAddMatrices(0.01,numberMultiplyMatrices(0.99,numberDivMatricesT(x.slice(1),255)))];
@@ -102,12 +102,8 @@ fs.readFile(filePath, 'utf8', function(err, data) {
                 targets[answer] = 0.99;
                 targets = [targets];
                 neural.train(inputs, targets,answer);
-                // console.log(neural.who);
             }
         }
-        // fs.writeFile('./trained_wih.js',`export const trained_wih = ${JSON.stringify(neural.wih)};`,(err)=>{})
-        // fs.writeFile('./trained_who.js',`export const trained_who = ${JSON.stringify(neural.who)};`,(err)=>{})
-        // console.log('저장완료');
     }
 });
 
