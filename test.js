@@ -16,18 +16,18 @@ class neuralNetwork{
 
         this.lr = learningrate;
     }
-    train(inputs_list, targets_list,ans){
-        let inputs = transpose(inputs_list);
-        let targets = transpose(targets_list);
-        let hidden_inputs = dot(this.wih, inputs);
-        let hidden_outputs = sigmoid(hidden_inputs);
-        let final_inputs = dot(this.who, hidden_outputs);
-        let final_outputs = sigmoid(final_inputs);
-        let output_errors = subtractMatrices(targets,final_outputs);
-        let hidden_errors = dot(transpose(this.who), output_errors);
+    train(inputsList, targetsList,ans){
+        let inputs = transpose(inputsList);
+        let targets = transpose(targetsList);
+        let hiddenInputs = dot(this.wih, inputs);
+        let hiddenOutputs = sigmoid(hiddenInputs);
+        let finalInputs = dot(this.who, hiddenOutputs);
+        let finalOutputs = sigmoid(finalInputs);
+        let outputErrors = subtractMatrices(targets,finalOutputs);
+        let hiddenErrors = dot(transpose(this.who), outputErrors);
 
 
-        const ind = final_outputs.findIndex(x=>x==Math.max(...final_outputs))
+        const ind = finalOutputs.findIndex(x=>x==Math.max(...finalOutputs))
         
         results.push(ind==ans)
 
@@ -37,10 +37,10 @@ class neuralNetwork{
                 this.lr,
                 dot(
                     multiplyMatrices(
-                        multiplyMatrices(output_errors,final_outputs),
-                        numberMinusMatrices(1.0,final_outputs)
+                        multiplyMatrices(outputErrors,finalOutputs),
+                        numberMinusMatrices(1.0,finalOutputs)
                     ),
-                    transpose(hidden_outputs)
+                    transpose(hiddenOutputs)
                 )
             )
         );
@@ -50,21 +50,21 @@ class neuralNetwork{
                 this.lr,
                 dot(
                     multiplyMatrices(
-                        multiplyMatrices(hidden_errors,hidden_outputs),
-                        numberMinusMatrices(1.0,hidden_outputs)
+                        multiplyMatrices(hiddenErrors,hiddenOutputs),
+                        numberMinusMatrices(1.0,hiddenOutputs)
                     ),
                     transpose(inputs)
                 )
             )
         );
     }
-    query(inputs_list){
-        let inputs = transpose(inputs_list);
-        let hidden_inputs = dot(this.wih, inputs);
-        let hidden_outputs = sigmoid(hidden_inputs);
-        let final_inputs = dot(this.who, hidden_outputs);
-        let final_outputs = sigmoid(final_inputs);
-        return final_outputs;
+    query(inputsList){
+        let inputs = transpose(inputsList);
+        let hiddenInputs = dot(this.wih, inputs);
+        let hiddenOutputs = sigmoid(hiddenInputs);
+        let finalInputs = dot(this.who, hiddenOutputs);
+        let finalOutputs = sigmoid(finalInputs);
+        return finalOutputs;
     }
 }
 
@@ -76,6 +76,7 @@ let learningRate = 0.1;
 
 let neural = new neuralNetwork(inputNodes,hiddenNodes,outputNodes,learningRate);
 
+const { log } = require('console');
 const fs = require('fs');
 
 let results = []; 
@@ -93,7 +94,7 @@ fs.readFile(filePath, 'utf8', function(err, data) {
                 i++;
                 if(i%100==0){
                     console.log(i,`정답률 : ${results.filter(x=>x==1).length / results.length * 100}%`);
-                    results = [];
+                    // results = [];
                 }
                 x = x.split(',');
                 let answer = x[0];
@@ -106,6 +107,7 @@ fs.readFile(filePath, 'utf8', function(err, data) {
         }
     }
 });
+
 
 
 function numberAddMatrices(number,array){
