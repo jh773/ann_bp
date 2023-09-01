@@ -1,10 +1,3 @@
-
-const score = {
-    process : 0,
-    correct : 0,
-    wrong : 0,
-}
-
 class neuralNetwork{
     constructor(inputnodes, hiddennodes, outputnodes, learningrate){
         this.inodes = inputnodes;
@@ -92,7 +85,7 @@ fs.readFile(filePath, 'utf8', function(err, data) {
         for(let k = 0; k < epochs; k++){
             for(let x of data.split('\n')){
                 i++;
-                if(i%100==0){
+                if(i%1000==0){
                     console.log(i,`정답률 : ${results.filter(x=>x==1).length / results.length * 100}%`);
                     // results = [];
                 }
